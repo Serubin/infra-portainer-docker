@@ -9,8 +9,19 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/data/portainer:/data
+    networks:
+      - traefik
+      - default
     labels:
-      - "traefik.domain=cloud.serubin.net"
       - "traefik.enable=true"
+      - "traefik.domain=admin.serubin.net"
+      - "traefik.frontend.rule=Host: admin.serubin.net; PathPrefixStrip: /portainer"
+      - "traefik.frontend.whiteList.sourceRange=172.110.20.64/32,129.21.39.75/32"
+      - "traefik.frontend.redirect.regex=^(.*)/portainer$$"
+      - "traefik.frontend.redirect.replacement=$$1/portainer/"
+      - "traefik.frontend.redirect.permanent=true"
+      - "traefik.docker.network=traefik"
       - "traefik.port=9000"
-
+networks:
+  traefik:
+    external: true
